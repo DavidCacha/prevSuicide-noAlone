@@ -1,0 +1,195 @@
+{
+    "conversations": [
+      {
+        "conversation_id": "psychology-anxiety-001",
+        "topic": "Ansiedad y manejo del estrés",
+        "date": "2025-03-07",
+        "status":"Terminada", 
+        "messages": [
+          {
+            "date": "2025-03-07",
+            "time": "9:59 AM",
+            "user": "David",
+            "message": "Hola"
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:00 AM",
+            "user": "David",
+            "message": "Últimamente me siento muy ansiosa y no sé por qué."
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:02 AM",
+            "assistant": "Es normal sentir ansiedad en ciertos momentos. ¿Has notado si hay alguna situación o pensamiento específico que la desencadena?"
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:05 AM",
+            "user": "David",
+            "message": "Sí, sobre todo cuando tengo muchas tareas pendientes y siento que no las podré terminar a tiempo."
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:07 AM",
+            "assistant": "Eso suena a ansiedad por la carga de trabajo. A veces, dividir las tareas en pasos pequeños puede ayudar. ¿Has intentado organizar tu tiempo con listas o recordatorios?"
+          }
+        ]
+      },
+      {
+        "conversation_id": "psychology-depression-002",
+        "topic": "Depresión y estado de ánimo bajo",
+        "date": "2025-03-08",
+        "status":"Pausada", 
+        "messages": [
+          {
+            "date": "2025-03-08",
+            "time": "09:30 AM",
+            "user": "David",
+            "message": "Me siento desmotivado últimamente, como si nada tuviera sentido."
+          },
+          {
+            "date": "2025-03-08",
+            "time": "09:32 AM",
+            "assistant": "Lo siento mucho. ¿Cuándo empezaste a sentirte así? A veces, identificar el origen puede ayudar a manejarlo mejor."
+          },
+          {
+            "date": "2025-03-08",
+            "time": "09:35 AM",
+            "user": "David",
+            "message": "Hace algunas semanas, después de algunos problemas personales."
+          },
+          {
+            "date": "2025-03-08",
+            "time": "09:38 AM",
+            "assistant": "Es comprensible. A veces, hablar con alguien de confianza o escribir tus pensamientos puede aliviar un poco la carga emocional."
+          }
+        ]
+      },
+      {
+        "conversation_id": "psychology-selfesteem-003",
+        "topic": "Autoestima y confianza en uno mismo",
+        "date": "2025-03-08",
+        "status":"Terminada", 
+        "messages": [
+          {
+            "date": "2025-03-09",
+            "time": "02:00 PM",
+            "user": "David",
+            "message": "Me cuesta mucho confiar en mí misma y en mis decisiones."
+          },
+          {
+            "date": "2025-03-09",
+            "time": "02:02 PM",
+            "assistant": "La confianza en uno mismo se construye con el tiempo. ¿Hay situaciones específicas en las que te sientes así?"
+          },
+          {
+            "date": "2025-03-09",
+            "time": "02:05 PM",
+            "user": "David",
+            "message": "Sí, especialmente cuando tengo que hablar en público o tomar decisiones importantes."
+          },
+          {
+            "date": "2025-03-09",
+            "time": "02:08 PM",
+            "assistant": "Es normal sentir inseguridad en esas situaciones. Puedes empezar con pequeños retos, como hablar en reuniones pequeñas, para fortalecer tu confianza poco a poco."
+          }
+        ]
+      },
+      {
+        "conversation_id": "psychology-anxiety-004",
+        "topic": "Ansiedad y manejo del estrés",
+        "date": "2025-03-07",
+        "status":"Terminada", 
+        "messages": [
+          {
+            "date": "2025-03-07",
+            "time": "10:00 AM",
+            "user": "David",
+            "message": "Últimamente me siento muy ansiosa y no sé por qué."
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:02 AM",
+            "assistant": "Es normal sentir ansiedad en ciertos momentos. ¿Has notado si hay alguna situación o pensamiento específico que la desencadena?"
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:05 AM",
+            "user": "David",
+            "message": "Sí, sobre todo cuando tengo muchas tareas pendientes y siento que no las podré terminar a tiempo."
+          },
+          {
+            "date": "2025-03-07",
+            "time": "10:07 AM",
+            "assistant": "Eso suena a ansiedad por la carga de trabajo. A veces, dividir las tareas en pasos pequeños puede ayudar. ¿Has intentado organizar tu tiempo con listas o recordatorios?"
+          }
+        ]
+      },
+      {
+        "conversation_id": "psychology-depression-005",
+        "topic": "Depresión y estado de ánimo bajo",
+        "date": "2025-03-08",
+        "status":"Pausada", 
+        "messages": [
+          {
+            "date": "2025-03-08",
+            "time": "09:30 AM",
+            "user": "David",
+            "message": "Me siento desmotivado últimamente, como si nada tuviera sentido."
+          },
+          {
+            "date": "2025-03-08",
+            "time": "09:32 AM",
+            "assistant": "Lo siento mucho. ¿Cuándo empezaste a sentirte así? A veces, identificar el origen puede ayudar a manejarlo mejor."
+          },
+          {
+            "date": "2025-03-08",
+            "time": "09:35 AM",
+            "user": "David",
+            "message": "Hace algunas semanas, después de algunos problemas personales."
+          },
+          {
+            "date": "2025-03-08",
+            "time": "09:38 AM",
+            "assistant": "Es comprensible. A veces, hablar con alguien de confianza o escribir tus pensamientos puede aliviar un poco la carga emocional."
+          }
+        ]
+      },
+      {
+        "conversation_id": "psychology-selfesteem-006",
+        "topic": "Autoestima y confianza en uno mismo",
+        "date": "2025-03-09",
+        "status":"Terminada", 
+        "messages": [
+          {
+            "date": "2025-03-09",
+            "time": "02:00 PM",
+            "user": "David",
+            "message": "Me cuesta mucho confiar en mí misma y en mis decisiones."
+          },
+          {
+            "date": "2025-03-09",
+            "time": "02:02 PM",
+            "assistant": "La confianza en uno mismo se construye con el tiempo. ¿Hay situaciones específicas en las que te sientes así?"
+          },
+          {
+            "date": "2025-03-09",
+            "time": "02:05 PM",
+            "user": "David",
+            "message": "Sí, especialmente cuando tengo que hablar en público o tomar decisiones importantes."
+          },
+          {
+            "date": "2025-03-09",
+            "time": "02:08 PM",
+            "assistant": "Es normal sentir inseguridad en esas situaciones. Puedes empezar con pequeños retos, como hablar en reuniones pequeñas, para fortalecer tu confianza poco a poco."
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created_at": "2025-03-09 02:10 PM",
+      "total_conversations": 3
+    }
+  }
+  

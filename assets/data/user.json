@@ -1,0 +1,27 @@
+{
+    "profilePicture": "https://randomuser.me/api/portraits/men/45.jpg",
+    "name": "Luis David Casanova Chavez",
+    "email": "luisdcasanova1995@email.com",
+    "phone": "+52 7737393856",
+    "address": "Av. Reforma 123, CDMX, México",
+    "registrationDate": "29/06/2015",
+    "username": "davidCacha95",
+    "gender": "Masculino",
+    "birthdate": "26/06/1995",
+    "occupation": "Desarrollador de Software",
+    "company": "Tech Solutions",
+    "bio": "Apasionado por la tecnología y el desarrollo de software. Siempre en busca de aprender algo nuevo.",
+    "socialLinks": {
+      "linkedin": "https://www.linkedin.com/in/luis-david-casanova-chavez-13b304195",
+      "github": "https://github.com/DavidCacha",
+      "facebook": "https://www.facebook.com/DavidcasanovaChavez/"
+    },
+    "accountStatus": "Activo",
+    "lastLogin": "2024-03-10 14:30:00",
+    "preferences": {
+      "language": "Español",
+      "theme": "dark",
+      "notifications": true
+    }
+  }
+  
