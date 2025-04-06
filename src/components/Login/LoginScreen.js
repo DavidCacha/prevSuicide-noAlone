@@ -30,7 +30,8 @@ const LoginScreen = () => {
           style={styles.background}
         >
         <View style={styles.container}>
-        <Text style={styles.titleApp}>NoAlone</Text>
+        <Text style={styles.titleApp}>NoAloneApp</Text>
+        <Text style={{fontSize:20, textAlign:'center', fontWeight:'500', color:'black'}}>Siempre contigo, incluso en lo más difícil</Text>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <TextInput
             style={styles.input}
@@ -49,9 +50,10 @@ const LoginScreen = () => {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Ingresar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={()=>{}}>
             <Text style={styles.buttonText}>Crear cuenta</Text>
         </TouchableOpacity>
+        <Text style={{padding:15, fontSize:15, color:'white', fontWeight:'600'}}>¿Olvidaste tu contraseña?</Text>
         <Text style={styles.footer}>App creada por Luis David Casanova Chavez</Text>
         {/* Modal de éxito */}
         <Modal
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
   },
   titleApp:{
     fontFamily:'cursive'
-    , fontSize:95,
+    , fontSize:75,
     fontWeight:'light',
     marginTop:-200,marginBottom:15,
     textDecorationLine: 'line-through',
