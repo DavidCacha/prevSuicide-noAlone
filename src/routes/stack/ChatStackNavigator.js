@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import HistorialChatScreen from '../../screens/HistorialChat';
-import ChatScreen from '../../components/HistorialChat/chatScreen';
+import ChatScreenHistory from '../../components/HistorialChat/chatScreen';
+import ChatOldScreen from '../../components/Chat/chatScreenOld';
 
 const Stack = createStackNavigator();
 
@@ -14,8 +15,12 @@ export const ChatStackNavigator = () => {
         
       />
       <Stack.Screen 
-        name="ChatScreen" 
-        component={ChatScreen} 
+        name="ChatScreenHistory" 
+        component={ChatScreenHistory} 
+      />
+      <Stack.Screen 
+        name="ChatOldScreen" 
+        component={ChatOldScreen} 
       />
     </Stack.Navigator>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const ChatsBubble = ({ message }) => {
   return (
@@ -7,7 +8,7 @@ const ChatsBubble = ({ message }) => {
       styles.container,
       message.user ? styles.senderContainer : styles.receiverContainer // Aplica alineación según el usuario
     ]}>
-      <Text style={[styles.textUser,  message.user ? styles.senderText : styles.receiverText]}>{message.user || 'Bot'}</Text>
+      <Text style={[styles.textUser,  message.user ? styles.senderText : styles.receiverText]}>{message.user || message.bot}</Text>
       <View style={[styles.bubbleContainer, message.user ? styles.sender : styles.receiver]}>
         <Text style={styles.bubbleText}>{message.message || message.assistant}</Text>
       </View>

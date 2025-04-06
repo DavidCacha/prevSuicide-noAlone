@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import { View, Text, FlatList, ImageBackground, ScrollView, StyleSheet, Pressable } from 'react-native';
 import Contact from '../components/ContactEmergency/contact';
 import { useNavigation } from '@react-navigation/native';
-import contactEmergency from '../../assets/data/contactEmergency.json';
 import CustomModal from '../components/profile/CustomModal';
+import { useSelector } from 'react-redux';
 
 
 
@@ -11,6 +11,7 @@ const ContactoSOSScreen = () => {
   const label = "Se notifico por SMS a tus contactos principales para te puedan ayudar, Recuerda no estas solo...";
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+  const contacts = useSelector(state => state.contacts.contacts);
     const showModal = () => {
       setModalVisible(true);
       setTimeout(() => {
@@ -34,8 +35,7 @@ const ContactoSOSScreen = () => {
     }));
   }
 
-  const groupedContacts = groupByContact(contactEmergency.emergency_contacts);
-  console.log(groupedContacts)
+  const groupedContacts = groupByContact(contacts);
   return (
      <ImageBackground 
           source={require('../../assets/image/sky.jpg')} // Ruta de la imagen de fondo

@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, Button, ImageBackground, StyleSheet, FlatList, Pressable } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import conversations from '../../assets/data/conversations.json'
+import { useSelector } from 'react-redux';
 
 const HomeScreen = ({ navigation }) => {
-
-  const conversation = conversations.conversations.filter((item)=> item.status === 'Pausada');
-  console.log(conversation);
+  const conversations = useSelector(state => state.conversations.conversations);
+  const conversation = conversations.filter((item)=> item.status === 'Pausada');
   return (
     <ImageBackground 
           source={require('../../assets/image/peace_mind.jpg')} // Ruta de la imagen de fondo
@@ -14,9 +13,12 @@ const HomeScreen = ({ navigation }) => {
         >
         <ScrollView contentContainerStyle={{ paddingHorizontal: 5 }} style={styles.backgroundScroll}>
       
-        <View style={{paddingHorizontal:15}}>
-           <Text style={styles.titleBanner}>Tienes Chats pausados deseas continuar con ellos.</Text>
+        <View style={{flexDirection:'column', paddingHorizontal:15, justifyContent:'center', alignItems:'center'}}>
+          {conversation.length !== 0 && (
+            <>
+             <Text style={styles.titleBanner}>Tienes Chats pausados deseas continuar con ellos.</Text>
            <FlatList
+              key={conversation.conversation_id}
               data={conversation}
               keyExtractor={(item) => item.title}
               renderItem={({item} ) => (
@@ -33,7 +35,9 @@ const HomeScreen = ({ navigation }) => {
                 </Pressable>
             )}
           />  
-          <View style={{flexDirection:'column', justifyContent:'center'}}>
+            </>
+          )}
+          <View style={{flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
           <Text style={{fontFamily:'ligth', fontWeight:'bold', fontSize:25, textAlign:'center', paddingBottom:25}}>Para continuar con tu ayuda, ve nuetsras siguientes opciones.</Text>  
           <Pressable style={styles.presable} onPress={() => navigation.openDrawer()}>
             <Text style={styles.textPresable}>Ver opciones de ayuda</Text>  
@@ -49,10 +53,12 @@ const styles = StyleSheet.create({
   textPresable:{
     fontSize:20,
     fontWeight:'800',
-    color:'black'
+    textAlign:'center',
+    color:'black',
+    paddingRight:20
   },
   presable:{
-    width:'95%',
+    width:'100%',
     backgroundColor:'pink',
     padding:15,
     flexDirection:'row',
@@ -61,7 +67,7 @@ const styles = StyleSheet.create({
     borderRadius:25, 
     borderColor:'black',
     borderWidth:2,
-    marginLeft:10
+    marginLeft:0
   },
   chatContainer: {
     activeOpacity: 1 ,

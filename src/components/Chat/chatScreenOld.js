@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, FlatList, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, Pressable } from 'react-native';
 import { sendMessageToGPT } from '../../services/openaiservice';
 import ChatBubble from './chatBubble';
-import CloudBubble from './clouds/cloud';
+import { useNavigation } from '@react-navigation/native';
+
 import CapibaraAddChat from './capibara';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -11,17 +12,26 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { updateConversation } from '../../features/conversations/conversationsSlice';
 
-const ChatScreen = () => {
+
+const ChatOldScreen = ({route}) => {
+
+  const { chatId } = route.params; 
+  const conversations = useSelector(state => state.conversations.conversations);
+  
+
+    const dataConversation = conversations;
+    const conversation = dataConversation.filter(item => {
+      return item.conversation_id === chatId;
+    });
+  const navigation = useNavigation();
+  
   const [modalVisible, setModalVisible] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(conversation[0].messages);
   const [inputText, setInputText] = useState('');
   const [welcomeMessage, setWelcomeMessage] = useState(true);
   const [saveChat, setSaveChat] = useState(false);
   const [nameChat, setNameChat] = useState('');
   const [value, setValue] = useState('Pausada');
-  const conversationsData = useSelector(state => state.conversations.conversations);
-  const profileData = useSelector(state => state.profile.profile);
-  const asistentData =  useSelector(state => state.asistent.asistent);
   const fecha = new Date();
   const formattedDate = fecha.toLocaleDateString('en-CA');
   const dispatch = useDispatch();
@@ -35,38 +45,44 @@ const ChatScreen = () => {
     { label: 'Pausada', value: 'Pausada' },
     { label: 'Terminada', value: 'Terminada' },
   ];
+  
 
+  const participantes = {};
+  const resultado = [];
 
-
-  function getNextConversationId(conversationsData) {
-    const lastId = conversationsData
-      .map(conv => conv.conversation_id)
-      .map(id => parseInt(id.split('-').pop())) // obtiene el número (001, 002...)
-      .sort((a, b) => b - a)[0] || 0;
-
-    const nextId = String(lastId + 1).padStart(3, '0');
-    return `psychology-chat-${nextId}`;
-  }
-
+  messages.forEach(item => {
+    if (item.user && !participantes[item.user]) {
+      participantes[item.user] = true;
+      resultado.push(item);
+    }
+    if (item.bot && !participantes[item.bot]) {
+      participantes[item.bot] = true;
+      resultado.push(item);
+    }
+  });
+  
+  const topic  = conversation.map(conversation => {return conversation.topic});
   
   const horaFormateada = fecha.toLocaleTimeString('en-US', opciones);
   const showModal = () => {
     const newConversation = {
-      "conversation_id":getNextConversationId(conversationsData),
-      "topic": nameChat,
+      "conversation_id":conversation[0].conversation_id,
+      "topic": topic,
       "date": formattedDate,
-      "status":value, 
+      "status":'Terminada', 
       "messages":messages
     };
-    const updatedConversations = [...conversationsData, newConversation];
-    const newObjectConversations = {
-      conversations:updatedConversations
-    }
+    const updatedConversations = conversations.map(conv =>
+      conv.conversation_id === newConversation.conversation_id
+        ? { ...conv, ...newConversation } // reemplaza solo ese objeto
+        : conv
+    );
     dispatch(updateConversation(updatedConversations));
     setModalVisible(true);
     setTimeout(() => {
       setModalVisible(false);
       setMessages([]); setWelcomeMessage(true); setSaveChat(false);
+      navigation.navigate('HistorialChat')
     }, 2500); // Se cerrará después de 2 segundos
   };
 
@@ -74,64 +90,32 @@ const ChatScreen = () => {
     if (!inputText.trim()) return;
 
     // Agregar el mensaje del usuario al chat
-    const newMessages = [...messages, {date: formattedDate, time: horaFormateada,  user:profileData.username, message: inputText}];
+    const newMessages = [...messages, {date: formattedDate, time: horaFormateada,  user: resultado[0].user, message: inputText}];
     setMessages(newMessages);
     setInputText('');
 
     // Enviar a ChatGPT
     const botResponse = await sendMessageToGPT(newMessages);
-    setMessages([...newMessages, {date: formattedDate, time: horaFormateada,  bot:asistentData, message: botResponse}]);
+    setMessages([...newMessages, {date: formattedDate, time: horaFormateada,  bot: resultado[1].bot, message: botResponse}]);
   };
   
-  const changeWelcome = (param) => {
-    setMessages([...[]]);    
-    setWelcomeMessage(param);
-    setInputText('');
-    setNameChat('');
-    setSaveChat(false);
-    setValue('Pausada');
-  }
- 
   return (
     <ImageBackground 
       source={require('../../../assets/image/background.jpeg')} // Ruta de la imagen de fondo
       style={styles.background}
     >
       <ScrollView contentContainerStyle={{ paddingHorizontal: 5 }} style={styles.backgroundScroll}>
-        
-        {
-          welcomeMessage && (
-            <CloudBubble/>
-
-          )
-        }
-        {
-          saveChat && (
-            <>
-            <Text style={{color:'red'}}>Para guardar chat debes agregar un titulo</Text>
-            <TextInput
-                  style={[styles.input, { width:'100%' }]}
-                  value={nameChat}
-                  onChangeText={setNameChat}
-                  placeholder="Ingresa el nombre del Chat"
-                />
-            </>
-          )
-        }
+        <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+          <Text style={{textAlign:'center', fontWeight:'800', fontSize:35}}>{topic}</Text>
+        </View>
         <FlatList
           data={messages}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
-            <ChatBubble user={item.user} bot={item.bot} time={item.time} message={item.message} isSender={index % 2 === 0} />
+            <ChatBubble user={item.user} bot={item.bot} time={item.time} message={item.message || item.assistant} isSender={item.user ? true : false} />
           )}
         />
 
-        {welcomeMessage && (
-          <CapibaraAddChat setWelcomeMessage={changeWelcome}/>
-        )}
-
-
-        {!welcomeMessage && (
           <>
               <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                 <TextInput
@@ -173,9 +157,9 @@ const ChatScreen = () => {
               )}
               {messages.length !== 0 ? (
                 <TouchableOpacity style={[styles.button, { backgroundColor:'#ec407a' }]}
-                onPress={() => nameChat === ''? setSaveChat(true) : showModal()}
+                onPress={() => showModal()}
                 >
-                  <Text style={styles.buttonText}>{nameChat === ''? 'Guardar y finalizar chat': 'Finalizar chat'}</Text>
+                  <Text style={styles.buttonText}>Finalizar chat</Text>
                 </TouchableOpacity>
               ):
               <TouchableOpacity style={[styles.button, { backgroundColor:'#ec407a' }]}
@@ -185,7 +169,7 @@ const ChatScreen = () => {
               }
               
          </>        
-        )}  
+        
         <CustomModal label="Guardando Chat... Podras ver tu chat en el Historial" visible={modalVisible} onClose={() => setModalVisible(false)} />
       </ScrollView>
     </ImageBackground>
@@ -247,4 +231,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ChatScreen;
+export default ChatOldScreen;

@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
 import AccountDetails from "../components/profile/AcountDetails";
-import user from "../../assets/data/user.json"; 
+import { useSelector } from 'react-redux';
+import { View } from 'react-native';
 
-const ProfileScreen = ({ navigation }) => {
+
+const ProfileScreen = () => {
+  const profileData = useSelector(state => state.profile.profile);
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <AccountDetails user={user} />
+      <AccountDetails user={profileData} />
     </View>
   );
 };
 
 export default ProfileScreen;
+

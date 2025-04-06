@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const ChatBubble = ({ message, isSender, time }) => {
-  
+const ChatBubble = ({ user, bot, message, isSender, time }) => {
   return (
     <>
     <Text 
-        style={[styles.textUser,  isSender ? styles.senderText : styles.receiverText]}>{!isSender ? 'Bot' : 'David'}</Text>
+        style={[styles.textUser,  isSender ? styles.senderText : styles.receiverText]}>{user ? user : bot}</Text>
     <View style={[styles.bubbleContainer, isSender ? styles.sender : styles.receiver]}>
       <Text style={styles.bubbleText}>{message}</Text>
     </View>

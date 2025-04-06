@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ImageBackground , StyleSheet} from 'react-native';
+import { View , StyleSheet} from 'react-native';
 import ChatScreen from '../components/Chat/chatScreen';
 
 
@@ -12,15 +12,5 @@ const ConversationScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba( 	240, 98, 146, 0.5)', // Negro semi-transparente
-  },
-});
+
 export default ConversationScreen;

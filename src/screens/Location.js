@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Button, Pressable, StyleSheet } from 'react-native';
 import MapScreen from '../components/maps/mapsScreen';
 
+
 const LocationScreen = ({ navigation }) => {
   return (
     <>

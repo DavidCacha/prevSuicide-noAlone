@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, ImageBackground, ScrollView, Pressable } from 'react-native';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 // Importamos el JSON
-import conversationsData from '../../assets/data/conversations.json';
 
 const HistorialChatScreen = () => {
+  const conversationsData = useSelector(state => state.conversations.conversations);
   const [conversations, setConversations] = useState([]);
   const navigation = useNavigation(); // Usa navigation para navegar
-
   useEffect(() => {
-    setConversations(conversationsData.conversations);
+    setConversations(conversationsData);
   }, []);
 
   const formatDate = (date) => moment(date).format('YYYY-MM-DD');
@@ -19,9 +19,7 @@ const HistorialChatScreen = () => {
   const groupByDate = (data) => {
     const today = formatDate(moment());
     const yesterday = formatDate(moment().subtract(1, 'day'));
-
     const grouped = { 'Hoy': [], 'Ayer': [] };
-
     data.forEach(item => {
       const itemDate = formatDate(item.date);
       if (itemDate === today) {
@@ -42,8 +40,7 @@ const HistorialChatScreen = () => {
     }));
   };
 
-  const groupedConversations = groupByDate(conversations);
-  console.log(groupedConversations)
+  const groupedConversations = groupByDate(conversationsData);
   return (
     <ImageBackground source={require('../../assets/image/happy.jpg')} style={styles.background}>
       <ScrollView style={styles.backgroundScroll}>
@@ -67,7 +64,9 @@ const HistorialChatScreen = () => {
                           { backgroundColor: chat.status === 'Pausada' ? 'rgb(166, 241, 224)' : 'rgba(247, 207, 216, 0.5)' },
                           pressed && { opacity: 1 }
                         ]}
-                        onPress={() => navigation.navigate('ChatScreen', { chatId: chat.conversation_id })}
+                        onPress={() => chat.status === 'Pausada' ? 
+                          navigation.navigate('ChatOldScreen', { chatId: chat.conversation_id }) :
+                            navigation.navigate('ChatScreenHistory', { chatId: chat.conversation_id })}
                       >
                         <Text style={styles.topic}>{chat.topic}</Text>
                         <Text style={styles.message}>{chat.date}</Text>

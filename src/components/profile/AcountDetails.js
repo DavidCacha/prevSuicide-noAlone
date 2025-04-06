@@ -55,7 +55,7 @@ const AccountDetails = ({user}) => {
         <Pressable style={styles.presableOptions} onPress={() => navigation.openDrawer()}>
           <Text style={styles.textPresableOption}>Salir de perfil</Text>
         </Pressable>
-        <Pressable style={styles.presableOptions} onPress={() => navigation.navigate('EditCount')}>
+        <Pressable style={styles.presableOptions} onPress={() => navigation.navigate('EditData')}>
           <Text style={styles.textPresableOption}>Edita tu cuenta</Text>
         </Pressable>
       </View>
