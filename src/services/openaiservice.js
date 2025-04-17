@@ -31,7 +31,7 @@ export const sendMessageToGPT = async (messages) => {
     } else {
       silentLog('Error al hacer la petición:', error.message);
     }
-    return "Lo siento, ocurrió un error al procesar tu mensaje.";
+    return "Lamento mucho que estés sintiéndote así, y me alegra que hayas decidido compartirlo conmigo. Lo que estás atravesando es muy difícil, pero no estás solo. A veces la mente, cuando está saturada de dolor, nos hace pensar que no hay salida, pero eso no significa que no exista. Estoy aquí para escucharte, sin juzgarte. Vamos a recorrer esto paso a paso, juntos. ¿Te parece si comenzamos por hablar de qué te ha estado pesando más últimamente?";
   }
 };
 

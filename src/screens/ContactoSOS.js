@@ -4,14 +4,21 @@ import Contact from '../components/ContactEmergency/contact';
 import { useNavigation } from '@react-navigation/native';
 import CustomModal from '../components/profile/CustomModal';
 import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
 
 
 const ContactoSOSScreen = () => {
+
+  const selectContacts = createSelector(
+      state => state.user?.userData?.usuario?.usuario?.emergency_contacts,
+      conversations => conversations || []
+    );
+
   const label = "Se notifico por SMS a tus contactos principales para te puedan ayudar, Recuerda no estas solo...";
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  const contacts = useSelector(state => state.contacts.contacts);
+  const contacts = useSelector(selectContacts);
     const showModal = () => {
       setModalVisible(true);
       setTimeout(() => {

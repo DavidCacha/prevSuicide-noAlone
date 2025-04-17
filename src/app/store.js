@@ -4,7 +4,8 @@ import contactReducer from '../features/contact/contactSlice';
 import musicReducer from '../features/music/musicSlice';
 import profileReducer from '../features/profile/profileSlice';
 import locationReducer from '../features/location/locationSlice';
-import asistentReducer from '../features/asistent/asistentSlice'
+import asistentReducer from '../features/asistent/asistentSlice';
+import userReducer from '../features/user/userSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     music: musicReducer,
     profile:profileReducer, 
     location:locationReducer,
-    asistent:asistentReducer
+    asistent:asistentReducer,
+    user: userReducer
   },
 })

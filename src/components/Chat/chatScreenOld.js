@@ -3,22 +3,31 @@ import { View, Text, TextInput, FlatList, StyleSheet, ScrollView, TouchableOpaci
 import { sendMessageToGPT } from '../../services/openaiservice';
 import ChatBubble from './chatBubble';
 import { useNavigation } from '@react-navigation/native';
-
-import CapibaraAddChat from './capibara';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Dropdown } from 'react-native-element-dropdown';
 import CustomModal from '../profile/CustomModal';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { updateConversation } from '../../features/conversations/conversationsSlice';
+import { createSelector } from 'reselect';
+import { updateUserData } from '../../features/user/userSlice';
 
 
 const ChatOldScreen = ({route}) => {
-
   const { chatId } = route.params; 
-  const conversations = useSelector(state => state.conversations.conversations);
-  
-
+  const selectUserData = createSelector(
+            state => state.user?.userData,
+            user => user || []
+          );
+  const userData = useSelector(selectUserData);
+  const selectUser = createSelector(
+      state => state.user?.userData?.usuario?.usuario,
+      user => user || []
+    );
+  const profileData = useSelector(selectUser);
+  const conversations = profileData.conversations;
+  const asistentData =  profileData.asistent;
+  const usernameData =  profileData.username;
     const dataConversation = conversations;
     const conversation = dataConversation.filter(item => {
       return item.conversation_id === chatId;
@@ -32,6 +41,7 @@ const ChatOldScreen = ({route}) => {
   const [saveChat, setSaveChat] = useState(false);
   const [nameChat, setNameChat] = useState('');
   const [value, setValue] = useState('Pausada');
+  const [message, setMessage] = useState('');
   const fecha = new Date();
   const formattedDate = fecha.toLocaleDateString('en-CA');
   const dispatch = useDispatch();
@@ -64,10 +74,10 @@ const ChatOldScreen = ({route}) => {
   const topic  = conversation.map(conversation => {return conversation.topic});
   
   const horaFormateada = fecha.toLocaleTimeString('en-US', opciones);
-  const showModal = () => {
+  const showModal = async () => {
     const newConversation = {
       "conversation_id":conversation[0].conversation_id,
-      "topic": topic,
+      "topic": topic[0],
       "date": formattedDate,
       "status":'Terminada', 
       "messages":messages
@@ -77,7 +87,51 @@ const ChatOldScreen = ({route}) => {
         ? { ...conv, ...newConversation } // reemplaza solo ese objeto
         : conv
     );
-    dispatch(updateConversation(updatedConversations));
+    const newConversations = {
+      conversations: updatedConversations,
+      metadata: {
+      created_at: formattedDate,
+      total_conversations: updatedConversations.length
+    }
+    };
+
+    const newUserData = {
+      ...userData, // mantiene mensaje y token
+      usuario: {
+        usuario: {
+          ...userData.usuario.usuario, // conserva todo lo actual
+          conversations: newConversations.conversations
+        }
+      }
+    };
+    try {
+              const userId = profileData._id;
+              const url = `http://192.168.100.5:3000/usuarios/${userId}/conversations`;
+              const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newConversations),
+              });
+              const data = await response.json();
+              
+              if (response.ok) {
+                dispatch(updateUserData(newUserData));
+                setMessage(data.mensaje);
+                setModalVisible(true);
+                setTimeout(() => {
+                  setModalVisible(false);
+                  setMessages([]); setWelcomeMessage(true); setSaveChat(false);
+                  navigation.navigate('HistorialChat')
+                }, 2500); 
+              } else {
+                console.error('❌ Error al actualizar:', data);
+              }
+            } catch (error) {
+              console.error('❗ Error en la petición:', error);
+            }
+    //dispatch(updateConversation(updatedConversations));
     setModalVisible(true);
     setTimeout(() => {
       setModalVisible(false);
@@ -90,13 +144,13 @@ const ChatOldScreen = ({route}) => {
     if (!inputText.trim()) return;
 
     // Agregar el mensaje del usuario al chat
-    const newMessages = [...messages, {date: formattedDate, time: horaFormateada,  user: resultado[0].user, message: inputText}];
+    const newMessages = [...messages, {date: formattedDate, time: horaFormateada,  user: usernameData, message: inputText}];
     setMessages(newMessages);
     setInputText('');
 
     // Enviar a ChatGPT
     const botResponse = await sendMessageToGPT(newMessages);
-    setMessages([...newMessages, {date: formattedDate, time: horaFormateada,  bot: resultado[1].bot, message: botResponse}]);
+    setMessages([...newMessages, {date: formattedDate, time: horaFormateada,  bot: asistentData, message: botResponse}]);
   };
   
   return (
@@ -170,7 +224,7 @@ const ChatOldScreen = ({route}) => {
               
          </>        
         
-        <CustomModal label="Guardando Chat... Podras ver tu chat en el Historial" visible={modalVisible} onClose={() => setModalVisible(false)} />
+        <CustomModal label={message} visible={modalVisible} onClose={() => setModalVisible(false)} />
       </ScrollView>
     </ImageBackground>
   );

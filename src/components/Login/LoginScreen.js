@@ -1,22 +1,49 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ImageBackground } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { updateUserData } from '../../features/user/userSlice';
+import { useSelector } from 'react-redux';
+
 
 const LoginScreen = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation(); // Usa navigation para navegar
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
 
-  const handleLogin = () => {
-    if (email === 'david-test@gmail.com' && password === '0987654321') {
-      setModalVisible(true);
-      setTimeout(() => {
-        setModalVisible(false);
-        navigation.replace('Drawer'); // Reemplaza el Login con el Drawer para que no se pueda volver atrás
-      }, 2000);
-    } else {
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://192.168.100.5:3000/auth/login', { // cambia esto si estás en Android o usa tu IP
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+      const data = await response.json();
+
+      dispatch(updateUserData(data));  
+      if (response.ok) {
+        setModalVisible(true);
+        setTimeout(() => {
+          setModalVisible(false);
+          navigation.replace('Drawer');
+        }, 2000);
+      } else {
+        console.error('❌ Error de autenticación:', data);
+        setErrorModalVisible(true);
+        setTimeout(() => {
+          setErrorModalVisible(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('❌ Error de red o servidor:', error.message);
       setErrorModalVisible(true);
       setTimeout(() => {
         setErrorModalVisible(false);
@@ -24,6 +51,8 @@ const LoginScreen = () => {
     }
   };
 
+  const { userData } = useSelector(state => state.user);
+  const message = userData.mensaje;
   return (
     <ImageBackground 
           source={require('../../../assets/image/background.jpeg')} // Ruta de la imagen de fondo
@@ -31,7 +60,7 @@ const LoginScreen = () => {
         >
         <View style={styles.container}>
         <Text style={styles.titleApp}>NoAloneApp</Text>
-        <Text style={{fontSize:20, textAlign:'center', fontWeight:'500', color:'black'}}>Siempre contigo, incluso en lo más difícil</Text>
+        <Text style={{fontSize:20, textAlign:'center', fontWeight:'900', color:'black'}}>Siempre contigo, incluso en lo más difícil</Text>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <TextInput
             style={styles.input}
@@ -63,7 +92,7 @@ const LoginScreen = () => {
         >
             <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-                <Text style={styles.modalText}>Inicio de sesión exitoso</Text>
+                <Text style={styles.modalText}>{userData.mensaje}</Text>
             </View>
             </View>
         </Modal>
@@ -76,7 +105,7 @@ const LoginScreen = () => {
         >
             <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-                <Text style={styles.modalText}>Credenciales incorrectas, intenta de nuevo</Text>
+                <Text style={styles.modalText}>{message}</Text>
             </View>
             </View>
         </Modal>

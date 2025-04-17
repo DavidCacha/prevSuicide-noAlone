@@ -6,14 +6,38 @@ import CustomModal from './CustomModal';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { updateLocation } from '../../features/location/locationSlice';
+import { updateUserData } from '../../features/user/userSlice';
+import { createSelector } from 'reselect';
+
 
 const EditLocationComponent = () => {
+  const selectLocation = createSelector(
+        state => state.user?.userData?.usuario?.usuario?.location,
+        conversations => conversations || []
+      );
+
+  const selectUser = createSelector(
+          state => state.user?.userData?.usuario?.usuario,
+          user => user || []
+        );
+      const selectToken = createSelector(
+        state => state.user?.userData.token,
+        user => user || []
+      );
+      
+      const selectUserData = createSelector(
+        state => state.user?.userData,
+        user => user || []
+      );
+      const userData = useSelector(selectUserData);
+      const token =  useSelector(selectToken);
+      const profileData = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const location = useSelector(state => state.location.location);
+  const location = useSelector(selectLocation);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState('');
 
   const initialData = {
     location: location || '',
@@ -22,14 +46,46 @@ const EditLocationComponent = () => {
   const [formData, setFormData] = useState(initialData);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const showModal = () => {
-    dispatch(updateLocation(formData));
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.navigate('Profile');
-    }, 2000);
-  };
+  const handleSubmit = async () => {
+      try {
+        const userId = profileData._id;
+        const url = `http://192.168.100.5:3000/usuarios/${userId}/location`;
+        const response = await fetch(url, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          
+          const newUserData = {
+            ...userData, // mantiene mensaje y token
+            usuario: {
+              usuario: {
+                ...userData.usuario.usuario, // conserva todo lo actual
+                location: data.location // sobrescribe solo `music`
+              }
+            }
+          };
+          dispatch(updateUserData(newUserData));
+          setHasChanges(false);
+          setMessage(data.mensaje);
+          setModalVisible(true);
+    
+          setTimeout(() => {
+            setModalVisible(false);
+            navigation.replace('Profile'); // fuerza recarga del perfil
+          }, 3000);
+        } else {
+          console.error('❌ Error al actualizar:', data);
+        }
+      } catch (error) {
+        console.error('❗ Error en la petición:', error);
+      }
+    };
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -49,12 +105,12 @@ const EditLocationComponent = () => {
           onChangeText={(text) => handleChange('location', text)}
         />
 
-        <Pressable style={styles.presable} onPress={() => hasChanges ? showModal() : navigation.navigate('Profile')}>
+        <Pressable style={styles.presable} onPress={() => hasChanges ? handleSubmit() : navigation.navigate('Profile')}>
           <Text style={styles.textPresable}>{hasChanges ? 'Guardar Ubicación' : 'Salir de edición'}</Text>
         </Pressable>
 
         <CustomModal
-          label="Guardando ubicación"
+          label={message}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

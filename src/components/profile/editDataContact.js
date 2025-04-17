@@ -7,16 +7,45 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomModal from './CustomModal';
 import { useDispatch } from 'react-redux';
-import { updateContact } from '../../features/contact/contactSlice';
+import { updateUserData } from '../../features/user/userSlice';
+import { createSelector } from 'reselect';
 
 const EditContactsComponent = () => {  
+  const selectContacts = createSelector(
+        state => state.user?.userData?.usuario?.usuario?.emergency_contacts,
+        conversations => conversations || []
+      );
+      
+  const selectUser = createSelector(
+          state => state.user?.userData?.usuario?.usuario,
+          user => user || []
+        );
+      const selectToken = createSelector(
+        state => state.user?.userData.token,
+        user => user || []
+      );
+      
+      const selectUserData = createSelector(
+        state => state.user?.userData,
+        user => user || []
+      );
+      const userData = useSelector(selectUserData);
+      const token =  useSelector(selectToken);
+      const profileData = useSelector(selectUser);
+
+      const selectContact = createSelector(
+        state => state.user?.userData?.usuario?.usuario.emergency_contacts,
+        user => user || []
+      );
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const contactsFromRedux = useSelector(state => state.contacts.contacts || []);
-
+  const contactsFromRedux = useSelector(selectContact);
+  var contacts = useSelector(selectContacts);
   const [formData, setFormData] = useState(contactsFromRedux[0]?.friends || []);
   const [modalVisible, setModalVisible] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [message, setMessage] = useState('');
+  
 
   const handleChange = (index, key, value) => {
     const updated = formData.map((item, i) =>
@@ -37,23 +66,59 @@ const EditContactsComponent = () => {
     setFormData(updated);
   };
 
-  const showModal = () => {
-    const updatedContacts = contactsFromRedux.map(item => {
-      if (item.type === 'friends') {
+  const handleSubmit = async () => {
+    const updatedContacts = contacts.map(contact => {
+      if (contact.type === 'friends') {
         return {
-          ...item,
-          friends: formData
+          ...contact,
+          friends: formData // ← reemplaza
         };
       }
-      return item;
+      return contact;
     });
-    dispatch(updateContact(updatedContacts));
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.navigate('Profile');
-    }, 2000);
-  };
+    const newContacts = {
+      emergency_contacts: updatedContacts
+    }
+      try {
+        const userId = profileData._id;
+        const url = `http://192.168.100.5:3000/usuarios/${userId}/emergency-contacts`;
+    
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(newContacts),
+        });
+    
+        const data = await response.json();
+        if (response.ok) {
+          const newUserData = {
+            ...userData, // mantiene mensaje y token
+            usuario: {
+              usuario: {
+                ...userData.usuario.usuario, // conserva todo lo actual
+                emergency_contacts: data.emergency_contacts // sobrescribe solo `music`
+              }
+            }
+          };
+          dispatch(updateUserData(newUserData));
+          setHasChanges(false);
+          setMessage(data.mensaje);
+          setModalVisible(true);
+    
+          setTimeout(() => {
+            setModalVisible(false);
+            navigation.replace('Profile'); // fuerza recarga del perfil
+          }, 3000);
+        } else {
+          console.error('❌ Error al actualizar:', data);
+        }
+      } catch (error) {
+        console.error('❗ Error en la petición:', error);
+      }
+    };
 
   useEffect(() => {
     const clean = (obj) => JSON.stringify(obj).replace(/\s+/g, '');
@@ -108,14 +173,14 @@ const EditContactsComponent = () => {
 
         <Pressable
           style={styles.presable}
-          onPress={() => (hasChanges && formData.length > 0 && isFormValid ? showModal() : navigation.navigate('Profile'))}
+          onPress={() => (hasChanges && formData.length > 0 && isFormValid ? handleSubmit() : navigation.navigate('Profile'))}
         >
           <Text style={styles.textPresable}>
             {hasChanges && formData.length > 0 && isFormValid ? 'Guardar Información' : 'Salir de edición'}
           </Text>
         </Pressable>
         <CustomModal
-          label="Actualizando contactos"
+          label={message}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

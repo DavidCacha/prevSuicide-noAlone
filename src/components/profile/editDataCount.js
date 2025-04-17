@@ -7,30 +7,36 @@ import { useSelector } from 'react-redux';
 import CustomModal from './CustomModal';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { updateProfile } from '../../features/profile/profileSlice';
-import { updateUserInAllConversations } from '../../features/conversations/conversationsSlice'
+import { createSelector } from 'reselect';
+import { updateUserData } from '../../features/user/userSlice';
+
 
 const EditCountDataComponent = () => {
   
+ const selectUser = createSelector(
+      state => state.user?.userData?.usuario?.usuario,
+      user => user || []
+    );
+  const selectToken = createSelector(
+    state => state.user?.userData.token,
+    user => user || []
+  );
+  
+  const selectUserData = createSelector(
+    state => state.user?.userData,
+    user => user || []
+  );
+  const userData = useSelector(selectUserData);
+  const token =  useSelector(selectToken);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const profileData = useSelector(state => state.profile.profile);
+  const profileData = useSelector(selectUser);
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [formData, setFormData] = useState(profileData);
   const [hasChanges, setHasChanges] = useState(false);
   const [changedFields, setChangedFields] = useState({});
-
-
-  const showModal = () => {
-    const username = changedFields.username.now;
-    dispatch(updateProfile(formData));
-    dispatch(updateUserInAllConversations(username));
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.navigate('Profile');
-    }, 3000);
-  };
+  const [message, setMessage] = useState('');
 
   // Detecta changes en los datos del formulario
   useEffect(() => {
@@ -39,18 +45,18 @@ const EditCountDataComponent = () => {
     setHasChanges(!isEqual);
   }, [formData, profileData]);
 
-
+  useEffect(() => {
+    setFormData(profileData);
+  }, [profileData]);
+  
   useEffect(() => {
     const changes = {};
-
     Object.keys(formData).forEach(key => {
       if (formData[key] !== profileData[key]) {
-        changes[key] = {
-          now: formData[key]
-        };
+        changes[key] = formData[key]; // ✅ Solo guarda el valor directamente
       }
     });
-
+  
     setChangedFields(changes);
   }, [formData, profileData]);
 
@@ -82,7 +88,52 @@ const EditCountDataComponent = () => {
   ];
 
   const socialPlatforms = ['linkedin', 'github', 'facebook'];
+
+  const handleSubmit = async () => {
+    try {
+      const userId = profileData._id;
+      const url = `http://192.168.100.5:3000/usuarios/${userId}`;
   
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(changedFields),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        const { mensaje, usuario: updatedUser } = data;
+  
+        const newUserData = {
+          mensaje: userData.mensaje, // si quieres conservar el anterior, puedes quitar esto si se actualiza con `mensaje`
+          token: userData.token,
+          usuario: { usuario: updatedUser }
+        };
+  
+        dispatch(updateUserData(newUserData));
+  
+        setFormData(updatedUser);
+        setChangedFields({});
+        setHasChanges(false);
+        setMessage(mensaje);
+        setModalVisible(true);
+  
+        setTimeout(() => {
+          setModalVisible(false);
+          navigation.replace('Profile'); // fuerza recarga del perfil
+        }, 3000);
+      } else {
+        console.error('❌ Error al actualizar:', data);
+      }
+    } catch (error) {
+      console.error('❗ Error en la petición:', error);
+    }
+  };  
+   
   return (
     <ScrollView contentContainerStyle={{ paddingHorizontal: 0 }}>
       <View style={{ paddingHorizontal: 15, paddingTop: 0, paddingBottom: 0 }}>
@@ -133,12 +184,12 @@ const EditCountDataComponent = () => {
           />
         </View>
 
-        <Pressable style={styles.presable} onPress={() => hasChanges ? showModal(): navigation.navigate('Profile') }>
+        <Pressable style={styles.presable} onPress={() => hasChanges ? handleSubmit(): navigation.navigate('Profile') }>
             <Text style={styles.textPresable}>{hasChanges ? 'Guardar Información':'Salir de edicion'}</Text>
           </Pressable>
 
         <CustomModal
-          label="Actualizando información"
+          label={message}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

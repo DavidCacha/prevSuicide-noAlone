@@ -7,29 +7,82 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { updateAsistent } from '../../features/asistent/asistentSlice';
-import { updateBotInAllConversations } from '../../features/conversations/conversationsSlice'
+import { updateBotInAllConversations } from '../../features/conversations/conversationsSlice';
+import { updateUserData } from '../../features/user/userSlice';
+import { createSelector } from 'reselect';
+
 
 const EditAsistenComponent = () => {
+  const selectAsistent = createSelector(
+          state => state.user?.userData?.usuario?.usuario,
+          conversations => conversations || []
+        );
+  const selectUser = createSelector(
+      state => state.user?.userData?.usuario?.usuario,
+      user => user || []
+    );
+    const selectToken = createSelector(
+    state => state.user?.userData.token,
+    user => user || []
+    );    
+    const selectUserData = createSelector(
+    state => state.user?.userData,
+    user => user || []
+  );
+  const userData = useSelector(selectUserData);
+  const token =  useSelector(selectToken);
+  const profileData = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const asistent = useSelector(state => state.asistent.asistent);
+  const asistent = useSelector(selectAsistent);
   const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState('');
   const initialData = {
-    asistent: asistent || '',
+    asistent: asistent.asistent || '',
   };
 
   const [formData, setFormData] = useState(initialData);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const showModal = () => {
-    dispatch(updateAsistent(formData.asistent));
-    dispatch(updateBotInAllConversations(formData.asistent));
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.navigate('Profile');
-    }, 2000);
-  };
+  const handleSubmit = async () => {
+        try {
+          const userId = profileData._id;
+          const url = `http://192.168.100.5:3000/usuarios/${userId}/asistent`;
+          const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            const newUserData = {
+              ...userData, // mantiene mensaje y token
+              usuario: {
+                usuario: {
+                  ...userData.usuario.usuario, 
+                  asistent: data.asistent 
+                }
+              }
+            };
+            dispatch(updateUserData(newUserData));
+            setHasChanges(false);
+            setMessage(data.mensaje);
+            setModalVisible(true);
+      
+            setTimeout(() => {
+              setModalVisible(false);
+              navigation.replace('Profile'); // fuerza recarga del perfil
+            }, 3000);
+          } else {
+            console.error('❌ Error al actualizar:', data);
+          }
+        } catch (error) {
+          console.error('❗ Error en la petición:', error);
+        }
+      };
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -49,12 +102,12 @@ const EditAsistenComponent = () => {
           onChangeText={(text) => handleChange('asistent', text)}
         />
 
-        <Pressable style={styles.presable} onPress={() => hasChanges ? showModal() : navigation.navigate('Profile')}>
+        <Pressable style={styles.presable} onPress={() => hasChanges ? handleSubmit() : navigation.navigate('Profile')}>
           <Text style={styles.textPresable}>{hasChanges ? 'Guardar nombre de asistente' : 'Salir de edición'}</Text>
         </Pressable>
 
         <CustomModal
-          label="Guardando nombre se asistente virtual"
+          label={message}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

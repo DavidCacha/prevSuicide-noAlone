@@ -6,12 +6,17 @@ import Geolocation from "@react-native-community/geolocation";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDLOzRiynIcz4Ff1VMgWk5Cr0ootdhKzVw";
 
 const MapScreen = () => {
-  const locationFromRedux = useSelector(state => state.location.location || "Bellas Artes, CDMX");
+  const selectLocation = createSelector(
+      state => state.user?.userData?.usuario?.usuario?.location,
+      conversations => conversations || []
+    );
+  const locationFromRedux = useSelector(selectLocation || "Bellas Artes, CDMX");
   const navigation = useNavigation();
   // Recibimos la dirección del destino desde route.params, si no se pasa se usa un valor por defecto
 

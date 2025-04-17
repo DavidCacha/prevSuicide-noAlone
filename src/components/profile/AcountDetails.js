@@ -1,12 +1,21 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { View, Text, Image, StyleSheet, Linking, ImageBackground, ScrollView, Pressable } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import CustomModal from "./CustomModal";
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
 
-const AccountDetails = ({user}) => {
+
+const AccountDetails = () => {
+  const user = useSelector(state => state.user?.userData?.usuario?.usuario || {});
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  const isFocused = useIsFocused();
+
+
   const showModal = () => {
     setModalVisible(true);
     setTimeout(() => {
@@ -14,7 +23,7 @@ const AccountDetails = ({user}) => {
       navigation.navigate('Login');
     }, 2000); // Se cerrará después de 2 segundos
   };
-  
+   
   
   return (
     <ImageBackground

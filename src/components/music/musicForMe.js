@@ -2,12 +2,18 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { WebView } from "react-native-webview";
 import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
 
 const SpotifyPlayer = () => {
-  const music = useSelector(state => state.music.music);
-  const spotifyEmbedUrl = music[0].song; // Enlace embebido
-  const spotifyEmbedUrlPlaylist = music[1].playlist; // Playlist de ejemplo
+
+  const selectMusic = createSelector(
+    state => state.user?.userData?.usuario?.usuario?.music,
+    conversations => conversations || []
+  );
+  const music = useSelector(selectMusic);
+  const spotifyEmbedUrl = music[0].song; 
+  const spotifyEmbedUrlPlaylist = music[1].playlist; 
 
   return (
     <View style={styles.container}>

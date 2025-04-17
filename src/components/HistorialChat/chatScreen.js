@@ -3,6 +3,7 @@ import { Text, View,  FlatList, StyleSheet, ImageBackground, ScrollView, Pressab
 import { useNavigation } from '@react-navigation/native';
 import ChatsBubble from './chatsBubble';
 import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -10,7 +11,12 @@ const ChatScreen = ({ route }) => {
    const [inputText, setInputText] = useState('');
   const navigation = useNavigation();
   const { chatId } = route.params; 
-  const conversationsData = useSelector(state => state.conversations.conversations);
+  const selectUser = createSelector(
+    state => state.user?.userData?.usuario?.usuario,
+    user => user || []
+  );
+  const profileData = useSelector(selectUser);
+  const conversationsData = profileData.conversations;
   const data = conversationsData;
   const conversation = data.filter(item => {
     return item.conversation_id === chatId;

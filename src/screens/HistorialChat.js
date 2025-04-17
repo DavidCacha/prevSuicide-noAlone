@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, ImageBackground, ScrollView, Pressable } from 'react-native';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
-// Importamos el JSON
 
 const HistorialChatScreen = () => {
-  const conversationsData = useSelector(state => state.conversations.conversations);
-  const [conversations, setConversations] = useState([]);
+
+  const selectConversations = createSelector(
+    state => state.user?.userData?.usuario?.usuario?.conversations,
+    conversations => conversations || []
+  );
+
+  const conversationsData = useSelector(selectConversations); 
   const navigation = useNavigation(); // Usa navigation para navegar
-  useEffect(() => {
-    setConversations(conversationsData);
-  }, []);
+ 
 
   const formatDate = (date) => moment(date).format('YYYY-MM-DD');
 
@@ -20,6 +23,7 @@ const HistorialChatScreen = () => {
     const today = formatDate(moment());
     const yesterday = formatDate(moment().subtract(1, 'day'));
     const grouped = { 'Hoy': [], 'Ayer': [] };
+  
     data.forEach(item => {
       const itemDate = formatDate(item.date);
       if (itemDate === today) {
@@ -33,13 +37,21 @@ const HistorialChatScreen = () => {
         grouped[itemDate].push(item);
       }
     });
-
-    return Object.entries(grouped).map(([date, items]) => ({
-      title: date,
-      data: items
-    }));
+  
+    return Object.entries(grouped).map(([date, items]) => {
+      const ordenado = items.sort((a, b) => {
+        if (a.status === 'Pausada' && b.status === 'Terminada') return -1;
+        if (a.status === 'Terminada' && b.status === 'Pausada') return 1;
+        return 0;
+      });
+  
+      return {
+        title: date,
+        data: ordenado
+      };
+    });
   };
-
+  
   const groupedConversations = groupByDate(conversationsData);
   return (
     <ImageBackground source={require('../../assets/image/happy.jpg')} style={styles.background}>
@@ -61,7 +73,7 @@ const HistorialChatScreen = () => {
                         key={chat.conversation_id} // Agrega una key única
                         style={({ pressed }) => [
                           styles.chatContainer,
-                          { backgroundColor: chat.status === 'Pausada' ? 'rgb(166, 241, 224)' : 'rgba(247, 207, 216, 0.5)' },
+                          { backgroundColor: chat.status === 'Pausada' ? 'rgba(166, 241, 224, 0.5)' : 'rgba(247, 207, 216, 0.5)' },
                           pressed && { opacity: 1 }
                         ]}
                         onPress={() => chat.status === 'Pausada' ? 

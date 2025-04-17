@@ -9,7 +9,9 @@ import { Dropdown } from 'react-native-element-dropdown';
 import CustomModal from '../profile/CustomModal';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { updateConversation } from '../../features/conversations/conversationsSlice';
+import { createSelector } from 'reselect';
+import { updateUserData } from '../../features/user/userSlice';
+
 
 const ChatScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -19,12 +21,31 @@ const ChatScreen = () => {
   const [saveChat, setSaveChat] = useState(false);
   const [nameChat, setNameChat] = useState('');
   const [value, setValue] = useState('Pausada');
-  const conversationsData = useSelector(state => state.conversations.conversations);
-  const profileData = useSelector(state => state.profile.profile);
-  const asistentData =  useSelector(state => state.asistent.asistent);
   const fecha = new Date();
   const formattedDate = fecha.toLocaleDateString('en-CA');
+  const [message, setMessage] = useState('');
+  const [hasChanges, setHasChanges] = useState(false);
   const dispatch = useDispatch();
+
+  const selectUser = createSelector(
+            state => state.user?.userData?.usuario?.usuario,
+            user => user || []
+          );
+        const selectToken = createSelector(
+          state => state.user?.userData.token,
+          user => user || []
+        );
+        
+        const selectUserData = createSelector(
+          state => state.user?.userData,
+          user => user || []
+        );
+        const userData = useSelector(selectUserData);
+        const token =  useSelector(selectToken);
+        const profileData = useSelector(selectUser);
+  
+        const conversationsData = profileData.conversations;
+        const asistentData =  profileData.asistent;
   const opciones = {
     hour: 'numeric',
     minute: '2-digit',
@@ -50,7 +71,8 @@ const ChatScreen = () => {
 
   
   const horaFormateada = fecha.toLocaleTimeString('en-US', opciones);
-  const showModal = () => {
+
+  const handleSubmit = async () => {
     const newConversation = {
       "conversation_id":getNextConversationId(conversationsData),
       "topic": nameChat,
@@ -59,16 +81,51 @@ const ChatScreen = () => {
       "messages":messages
     };
     const updatedConversations = [...conversationsData, newConversation];
-    const newObjectConversations = {
-      conversations:updatedConversations
+
+    const newConversations = {
+      conversations: updatedConversations
     }
-    dispatch(updateConversation(updatedConversations));
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      setMessages([]); setWelcomeMessage(true); setSaveChat(false);
-    }, 2500); // Se cerrará después de 2 segundos
-  };
+
+    const newConversationsState = {
+      updatedConversations
+    }
+
+    const newUserData = {
+      ...userData, // mantiene mensaje y token
+      usuario: {
+        usuario: {
+          ...userData.usuario.usuario, // conserva todo lo actual
+          conversations: newConversationsState.updatedConversations// sobrescribe solo `music`
+        }
+      }
+    };
+        try {
+          const userId = profileData._id;
+          const url = `http://192.168.100.5:3000/usuarios/${userId}/conversations`;
+          const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newConversations),
+          });
+          const data = await response.json();
+          if (response.ok) {
+            dispatch(updateUserData(newUserData));
+            setHasChanges(false);
+            setMessage(data.mensaje);
+            setModalVisible(true);
+            setTimeout(() => {
+              setModalVisible(false);
+              setMessages([]); setWelcomeMessage(true); setSaveChat(false);
+            }, 2500);
+          } else {
+            console.error('❌ Error al actualizar:', data);
+          }
+        } catch (error) {
+          console.error('❗ Error en la petición:', error);
+        }
+      };
 
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
@@ -173,7 +230,7 @@ const ChatScreen = () => {
               )}
               {messages.length !== 0 ? (
                 <TouchableOpacity style={[styles.button, { backgroundColor:'#ec407a' }]}
-                onPress={() => nameChat === ''? setSaveChat(true) : showModal()}
+                onPress={() => nameChat === ''? setSaveChat(true) : handleSubmit()}
                 >
                   <Text style={styles.buttonText}>{nameChat === ''? 'Guardar y finalizar chat': 'Finalizar chat'}</Text>
                 </TouchableOpacity>
@@ -186,7 +243,7 @@ const ChatScreen = () => {
               
          </>        
         )}  
-        <CustomModal label="Guardando Chat... Podras ver tu chat en el Historial" visible={modalVisible} onClose={() => setModalVisible(false)} />
+        <CustomModal label={message} visible={modalVisible} onClose={() => setModalVisible(false)} />
       </ScrollView>
     </ImageBackground>
   );

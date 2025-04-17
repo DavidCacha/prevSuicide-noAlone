@@ -2,10 +2,16 @@ import React from 'react';
 import { View, Text, Button, ImageBackground, StyleSheet, FlatList, Pressable } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
 const HomeScreen = ({ navigation }) => {
-  const conversations = useSelector(state => state.conversations.conversations);
-  const conversation = conversations.filter((item)=> item.status === 'Pausada');
+
+  const selectConversations = createSelector(
+    state => state.user?.userData?.usuario?.usuario?.conversations,
+    conversations => conversations || []
+  );
+  const messages = useSelector(selectConversations); 
+  const conversation = messages?.filter((item)=> item.status === 'Pausada');
   return (
     <ImageBackground 
           source={require('../../assets/image/peace_mind.jpg')} // Ruta de la imagen de fondo
