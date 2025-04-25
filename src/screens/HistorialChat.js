@@ -38,21 +38,33 @@ const HistorialChatScreen = () => {
       }
     });
   
-    return Object.entries(grouped).map(([date, items]) => {
-      const ordenado = items.sort((a, b) => {
-        if (a.status === 'Pausada' && b.status === 'Terminada') return -1;
-        if (a.status === 'Terminada' && b.status === 'Pausada') return 1;
-        return 0;
-      });
-  
-      return {
-        title: date,
-        data: ordenado
-      };
+    return Object.entries(grouped)
+  .sort(([a], [b]) => {
+    if (a === 'Hoy') return -1;
+    if (b === 'Hoy') return 1;
+    if (a === 'Ayer') return -1;
+    if (b === 'Ayer') return 1;
+
+    // Ordenar fechas en formato YYYY-MM-DD descendente
+    return moment(b).diff(moment(a));
+  })
+  .map(([date, items]) => {
+    const ordenado = items.sort((a, b) => {
+      if (a.status === 'Pausada' && b.status === 'Terminada') return -1;
+      if (a.status === 'Terminada' && b.status === 'Pausada') return 1;
+      return 0;
     });
+
+    return {
+      title: date,
+      data: ordenado
+    };
+  });
+
   };
   
   const groupedConversations = groupByDate(conversationsData);
+  console.log('grouped', groupedConversations)
   return (
     <ImageBackground source={require('../../assets/image/happy.jpg')} style={styles.background}>
       <ScrollView style={styles.backgroundScroll}>
