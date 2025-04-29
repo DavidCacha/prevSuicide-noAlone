@@ -12,9 +12,8 @@ const SpotifyPlayer = () => {
     conversations => conversations || []
   );
   const music = useSelector(selectMusic);
-  const spotifyEmbedUrl = music[0].song; 
-  const spotifyEmbedUrlPlaylist = music[1].playlist; 
-
+  const spotifyEmbedUrl = music[0]?.song; 
+  const spotifyEmbedUrlPlaylist = music[1]?.playlist; 
   return (
     <View style={styles.container}>
       <View style={styles.webviewContainer}>

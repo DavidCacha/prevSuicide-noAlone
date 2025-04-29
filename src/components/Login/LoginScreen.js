@@ -53,6 +53,9 @@ const LoginScreen = () => {
 
   const { userData } = useSelector(state => state.user);
   const message = userData.mensaje;
+
+  
+  
   return (
     <ImageBackground 
           source={require('../../../assets/image/background.jpeg')} // Ruta de la imagen de fondo
@@ -79,7 +82,7 @@ const LoginScreen = () => {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Ingresar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={()=>{}}>
+        <TouchableOpacity style={styles.button} onPress={()=>{navigation.replace('Register')}}>
             <Text style={styles.buttonText}>Crear cuenta</Text>
         </TouchableOpacity>
         <Text style={{padding:15, fontSize:15, color:'white', fontWeight:'600'}}>¿Olvidaste tu contraseña?</Text>

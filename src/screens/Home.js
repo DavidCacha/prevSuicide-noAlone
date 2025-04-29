@@ -18,7 +18,6 @@ const HomeScreen = ({ navigation }) => {
           style={styles.background}
         >
         <ScrollView contentContainerStyle={{ paddingHorizontal: 5 }} style={styles.backgroundScroll}>
-      
         <View style={{flexDirection:'column', paddingHorizontal:15, justifyContent:'center', alignItems:'center'}}>
           {conversation.length !== 0 && (
             <>
@@ -44,7 +43,14 @@ const HomeScreen = ({ navigation }) => {
             </>
           )}
           <View style={{flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+          {conversation.length !== 0 ? (
           <Text style={{fontFamily:'ligth', fontWeight:'bold', fontSize:25, textAlign:'center', paddingBottom:25}}>Para continuar con tu ayuda, ve nuetsras siguientes opciones.</Text>  
+          ): (
+            <>
+                        <Text style={{fontFamily:'ligth', fontWeight:'bolder', fontSize:25, textAlign:'center', paddingBottom:25, paddingTop:95}}>Actualmente no tienes conversaciones inci una en seccion de Chat</Text>  
+                        <Text style={{fontFamily:'light', fontWeight:'bold', fontSize:25, textAlign:'center', paddingBottom:25, paddingTop:95}}>Adicionalmente completa tu perfil con la informacion necesaria</Text>  
+            </>
+          )}
           <Pressable style={styles.presable} onPress={() => navigation.openDrawer()}>
             <Text style={styles.textPresable}>Ver opciones de ayuda</Text>  
           </Pressable>  

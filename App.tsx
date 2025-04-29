@@ -7,6 +7,7 @@ import { store } from './src/app/store'
 import { SideMenuNavigator } from "./src/routes/drawer/SideMenuNavigator"
 import LoginScreen from './src/components/Login/LoginScreen'; 
 import { LogBox } from 'react-native';
+import RegisterScreen from './src/screens/RegisterScreen';
 
 LogBox.ignoreLogs([
   'VirtualizedLists should never be nested',
@@ -21,6 +22,7 @@ const Stack = createStackNavigator();
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Drawer" component={SideMenuNavigator} />
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,50 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, ScrollView, Image,
-  Switch, StyleSheet, Pressable
+  View, Text, TextInput, ScrollView, Switch, StyleSheet, Pressable
 } from 'react-native';
 import { useSelector } from 'react-redux';
-import CustomModal from './CustomModal';
+import CustomModal from '../profile/CustomModal';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { createSelector } from 'reselect';
 import { updateUserData } from '../../features/user/userSlice';
 
-
-const EditCountDataComponent = () => {
-  
- const selectUser = createSelector(
-      state => state.user?.userData?.usuario?.usuario,
-      user => user || []
-    );
-  const selectToken = createSelector(
-    state => state.user?.userData.token,
-    user => user || []
-  );
-  
+const EditRegisterDataComponent = () => {
   const selectUserData = createSelector(
     state => state.user?.userData,
-    user => user || []
+    user => user || {}
   );
   const userData = useSelector(selectUserData);
-  const token =  useSelector(selectToken);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const profileData = useSelector(selectUser);
   
   const [modalVisible, setModalVisible] = useState(false);
-  const [formData, setFormData] = useState(profileData);
+  const [formData, setFormData] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
   const [changedFields, setChangedFields] = useState({});
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Asegura estructura mínima para nuevos usuarios
     const defaultData = {
+      profilePicture: "https://randomuser.me/api/portraits/men/32.jpg",
       name: '',
       email: '',
+      password: '',
       phone: '',
       address: '',
+      registrationDate: new Date().toISOString().split('T')[0], // Fecha actual
       username: '',
       gender: '',
       birthdate: '',
@@ -52,42 +40,38 @@ const EditCountDataComponent = () => {
       company: '',
       bio: '',
       socialLinks: {
+        twitter: '',
         linkedin: '',
-        github: '',
-        facebook: '',
       },
+      accountStatus: 'Activo', // Establecido como "Activo"
+      lastLogin: '',
       preferences: {
         language: '',
         theme: '',
         notifications: false,
       },
+      lastLogin: "2025-04-09 14:30:00",
     };
   
-    setFormData({ ...defaultData, ...profileData });
-  }, [profileData]);
-  
+    setFormData({ ...defaultData, ...userData });
+  }, [userData]);
 
-  // Detecta changes en los datos del formulario
   useEffect(() => {
     const clean = obj => JSON.stringify(obj).replace(/\s+/g, '');
-    const isEqual = clean(formData) === clean(profileData);
+    const isEqual = clean(formData) === clean(userData);
     setHasChanges(!isEqual);
-  }, [formData, profileData]);
+  }, [formData, userData]);
 
-  useEffect(() => {
-    setFormData(profileData);
-  }, [profileData]);
-  
   useEffect(() => {
     const changes = {};
     Object.keys(formData).forEach(key => {
-      if (formData[key] !== profileData[key]) {
-        changes[key] = formData[key]; // ✅ Solo guarda el valor directamente
+      if (formData[key] !== userData[key]) {
+        changes[key] = formData[key]; // Guarda el valor si es diferente
       }
     });
   
     setChangedFields(changes);
-  }, [formData, profileData]);
+  }, [formData, userData]);
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -106,6 +90,7 @@ const EditCountDataComponent = () => {
   const fields = [
     { label: 'Nombre', key: 'name' },
     { label: 'Email', key: 'email' },
+    { label: 'Contraseña', key: 'password' },
     { label: 'Teléfono', key: 'phone' },
     { label: 'Dirección', key: 'address' },
     { label: 'Usuario', key: 'username' },
@@ -116,44 +101,33 @@ const EditCountDataComponent = () => {
     { label: 'Bio', key: 'bio' },
   ];
 
-  const socialPlatforms = ['linkedin', 'github', 'facebook'];
+  const socialPlatforms = ['twitter', 'linkedin'];
 
   const handleSubmit = async () => {
     try {
-      const userId = profileData._id;
-      const url = `http://192.168.100.5:3000/usuarios/${userId}`;
-  
+      const url = `http://192.168.100.5:3000/usuarios/`;
+
       const response = await fetch(url, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(changedFields),
       });
-  
+
       const data = await response.json();
-  
       if (response.ok) {
-        const { mensaje, usuario: updatedUser } = data;
-  
-        const newUserData = {
-          mensaje: userData.mensaje, // si quieres conservar el anterior, puedes quitar esto si se actualiza con `mensaje`
-          token: userData.token,
-          usuario: { usuario: updatedUser }
-        };
-  
-        dispatch(updateUserData(newUserData));
-  
-        setFormData(updatedUser);
+        const { mensaje } = data;
+
+        
         setChangedFields({});
         setHasChanges(false);
         setMessage(mensaje);
         setModalVisible(true);
-  
+
         setTimeout(() => {
           setModalVisible(false);
-          navigation.replace('Profile'); // fuerza recarga del perfil
+          navigation.replace('Login'); 
         }, 3000);
       } else {
         console.error('❌ Error al actualizar:', data);
@@ -161,17 +135,11 @@ const EditCountDataComponent = () => {
     } catch (error) {
       console.error('❗ Error en la petición:', error);
     }
-  };  
+  };
+
   return (
     <ScrollView contentContainerStyle={{ paddingHorizontal: 0 }}>
       <View style={{ paddingHorizontal: 15, paddingTop: 0, paddingBottom: 0 }}>
-        <View style={styles.centeredView}>
-          <Image
-            source={{ uri: formData.profilePicture }}
-            style={styles.profileImage}
-          />
-        </View>
-
         {fields.map(({ label, key }) => (
           <InputField
             key={key}
@@ -199,22 +167,22 @@ const EditCountDataComponent = () => {
         />
         <InputField
           label="Tema"
-          value={formData?.preferences?.theme  ?? ''}
+          value={formData?.preferences?.theme ?? ''}
           onChangeText={(text) => handleNestedChange('preferences', 'theme', text)}
         />
         <View style={styles.switchContainer}>
           <Text style={styles.label}>Notificaciones</Text>
           <Switch
-            value={formData?.preferences?.notifications ?? ''}
+            value={formData?.preferences?.notifications ?? false}
             onValueChange={(value) =>
               handleNestedChange('preferences', 'notifications', value)
             }
           />
         </View>
 
-        <Pressable style={styles.presable} onPress={() => hasChanges ? handleSubmit(): navigation.navigate('Profile') }>
-            <Text style={styles.textPresable}>{hasChanges ? 'Guardar Información':'Salir de edicion'}</Text>
-          </Pressable>
+        <Pressable style={styles.presable} onPress={() => hasChanges ? handleSubmit() : navigation.navigate('Profile')}>
+          <Text style={styles.textPresable}>{hasChanges ? 'Guardar Información' : 'Salir de edición'}</Text>
+        </Pressable>
 
         <CustomModal
           label={message}
@@ -238,12 +206,6 @@ const styles = StyleSheet.create({
   centeredView: {
     alignItems: 'center',
     marginBottom: 5,
-  },
-  profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 8,
   },
   fieldContainer: {
     marginBottom: 12,
@@ -291,4 +253,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditCountDataComponent;
+export default EditRegisterDataComponent;

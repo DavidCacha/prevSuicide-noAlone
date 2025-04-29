@@ -2,7 +2,17 @@ import React from 'react';
 import { View, Text, Pressable, ImageBackground,ScrollView, StyleSheet } from 'react-native';
 import SpotifyPlayer from '../components/music/musicForMe';
 
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
+
 const MusicaScreen = ({ navigation }) => {
+   const selectMusic = createSelector(
+      state => state.user?.userData?.usuario?.usuario?.music,
+      conversations => conversations || []
+    );
+    const music = useSelector(selectMusic);
+    const spotifyEmbedUrl = music[0]?.song; 
+    const spotifyEmbedUrlPlaylist = music[1]?.playlist; 
   return (
       <ImageBackground 
         source={require('../../assets/image/music.jpg')} // Ruta de la imagen de fondo
@@ -10,8 +20,17 @@ const MusicaScreen = ({ navigation }) => {
       >
         <ScrollView contentContainerStyle={{ paddingHorizontal: 5 }} style={styles.backgroundScroll}>
         <View style={styles.content}>
-          <Text style={styles.title}>Musica que me hace sentir mejor</Text>
-          <SpotifyPlayer/>
+          {spotifyEmbedUrl && spotifyEmbedUrlPlaylist ? (
+            <>
+            <Text style={styles.title}>Musica que me hace sentir mejor</Text>
+            <SpotifyPlayer/>
+            </>
+          ): (
+            <>
+                            <Text style={styles.noInfo}>Actualmente no tienes musica agregada</Text>  
+                            <Text style={styles.noInfo}>Completa tu perfil con la informacion necesaria</Text>  
+                          </>
+          )}
           <View style={styles.contentPressable}>
             <Pressable style={styles.presable} onPress={() => navigation.openDrawer()}>
               <Text style={styles.textPresable}>Salir del Musica</Text>
@@ -24,6 +43,14 @@ const MusicaScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  noInfo:{
+    fontFamily:'ligth', 
+    fontWeight:'bolder', 
+    fontSize:25, 
+    textAlign:'center', 
+    paddingBottom:25, 
+    paddingTop:95
+  },
   contentPressable: {
     flexDirection:'row', 
     justifyContent:'center',

@@ -32,7 +32,7 @@ const AccountDetails = () => {
     >
     <ScrollView style={styles.backgroundScroll}>
     <View style={styles.container}>
-      <Image source={require('../../../assets/image/devCasanova2.jpeg')} style={styles.profileImage} />
+    <Image source={{ uri: user.profilePicture }} style={styles.profileImage} />
       <Text style={styles.name}>{user.name} (@{user.username})</Text>
       <Text style={styles.email}>{user.email}</Text>
     </View>
@@ -54,7 +54,10 @@ const AccountDetails = () => {
             <Text style={styles.link} onPress={() => Linking.openURL(user.socialLinks.github)}>GitHub</Text>
           )}
           {user.socialLinks.facebook && (
-            <Text style={styles.link} onPress={() => Linking.openURL(user.socialLinks.facebook)}>facebook</Text>
+            <Text style={styles.link} onPress={() => Linking.openURL(user.socialLinks.facebook)}>Facebook</Text>
+          )}
+           {user.socialLinks.twitter && (
+            <Text style={styles.link} onPress={() => Linking.openURL(user.socialLinks.twitter)}>Twitter</Text>
           )}
         </View>
       )}

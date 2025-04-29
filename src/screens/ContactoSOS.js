@@ -43,13 +43,15 @@ const ContactoSOSScreen = () => {
   }
 
   const groupedContacts = groupByContact(contacts);
+  const hasElements = groupedContacts.some(group => group.data.length > 0);
   return (
      <ImageBackground 
           source={require('../../assets/image/sky.jpg')} // Ruta de la imagen de fondo
           style={styles.background}
         >
           <ScrollView contentContainerStyle={{ paddingHorizontal: 5 }} style={styles.backgroundScroll}>
-            <View style={styles.container}>
+            {hasElements ? (
+              <View style={styles.container}>
               <Text style={styles.title}>Contacto de emergencia</Text>
               <FlatList
                 data={groupedContacts}
@@ -81,12 +83,29 @@ const ContactoSOSScreen = () => {
               </Pressable>
               <CustomModal label={label} visible={modalVisible} onClose={() => setModalVisible(false)} />
             </View>
+            ):(
+               <>
+                <Text style={styles.noInfo}>Actualmente no tienes contactos</Text>  
+                <Text style={styles.noInfo}>Completa tu perfil con la informacion necesaria</Text>  
+                <Pressable style={styles.presable} onPress={() => navigation.openDrawer()}>
+                <Text style={styles.textPresable}>Salir del Contactos</Text>
+                </Pressable>
+              </>
+            )}
           </ScrollView>
         </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  noInfo:{
+    fontFamily:'ligth', 
+    fontWeight:'bolder', 
+    fontSize:25, 
+    textAlign:'center', 
+    paddingBottom:25, 
+    paddingTop:95
+  },
   sendSMS:{
     backgroundColor:'pink',
     borderRadius: 25,

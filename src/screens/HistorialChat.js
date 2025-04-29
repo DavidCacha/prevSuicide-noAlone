@@ -64,11 +64,12 @@ const HistorialChatScreen = () => {
   };
   
   const groupedConversations = groupByDate(conversationsData);
-  console.log('grouped', groupedConversations)
+  const hasElements = groupedConversations.some(group => group.data.length > 0);
   return (
     <ImageBackground source={require('../../assets/image/happy.jpg')} style={styles.background}>
       <ScrollView style={styles.backgroundScroll}>
-        <View style={styles.container}>
+        {hasElements  ? (
+          <View style={styles.container}>
           <Text style={styles.title}>Conversaciones</Text>
           <FlatList
             data={groupedConversations}
@@ -106,6 +107,15 @@ const HistorialChatScreen = () => {
             <Text style={styles.textPresable}>Salir de historial</Text>
           </Pressable>
         </View>
+        ) : (
+          <>
+           <Text style={styles.noInfo}>Actualmente no tienes conversaciones incicia una en seccion de Chat</Text>  
+           <Text style={styles.noInfo}>Adicionalmente completa tu perfil con la informacion necesaria</Text> 
+           <Pressable style={styles.presable} onPress={() => navigation.openDrawer()}>
+            <Text style={styles.textPresable}>Salir de historial</Text>
+          </Pressable> 
+         </>
+        )}   
       </ScrollView>
     </ImageBackground>
   );
@@ -113,6 +123,14 @@ const HistorialChatScreen = () => {
 
 
 const styles = StyleSheet.create({
+  noInfo:{
+    fontFamily:'ligth', 
+    fontWeight:'bolder', 
+    fontSize:25, 
+    textAlign:'center', 
+    paddingBottom:25, 
+    paddingTop:95
+  },
   presable:{
     width:'95%',
     backgroundColor:'pink',

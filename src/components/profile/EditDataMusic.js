@@ -38,10 +38,11 @@ const EditMusicDataComponent = () => {
   const [message, setMessage] = useState('');
 
   const initialData = {
-    song:  music[0].song,
-    playlist: music[1].playlist,
+    song:  music[0]?.song,
+    playlist: music[1]?.playlist,
   };
 
+  const validatedMusic = music[0]?.song && music[1].playlist;
   const [formData, setFormData] = useState(initialData);
   const [hasChanges, setHasChanges] = useState(false);
 
