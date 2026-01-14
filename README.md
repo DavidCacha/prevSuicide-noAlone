@@ -94,20 +94,37 @@ OPENAI_API_KEY=your_openai_api_key
 API_BASE_URL=http://localhost:3000/api
 
 # Principales funcionalidades
-Login
-![WhatsApp Image 2025-04-06 at 12 36 20 AM](https://github.com/user-attachments/assets/ac909718-f8d8-4dd6-aa4f-4cf0ce89871e)
-Funcionalides
-![WhatsApp Image 2025-04-06 at 12 36 21 AM(1)](https://github.com/user-attachments/assets/7749da71-7c8d-4590-94e4-a94a68560f12)
-![WhatsApp Image 2025-04-06 at 12 36 23 AM(1)](https://github.com/user-attachments/assets/3fec98df-38a7-43df-bb96-bf4935b52df8)
-![WhatsApp Image 2025-04-06 at 12 36 22 AM](https://github.com/user-attachments/assets/545d7660-a1c4-420f-9cbb-6cedaf9aa532)
-![WhatsApp Image 2025-04-06 at 12 36 22 AM(8)](https://github.com/user-attachments/assets/325194e0-6ee0-4ee8-b4c6-4b29e12e5e9e)
-![WhatsApp Image 2025-04-06 at 12 36 22 AM(6)](https://github.com/user-attachments/assets/373fbd92-6327-4188-9ea2-f6ab66b5b933)
-![WhatsApp Image 2025-04-06 at 12 36 22 AM(5)](https://github.com/user-attachments/assets/fbd8b95a-bbe5-457e-b7dd-2a8d4c9d9b71)
-![WhatsApp Image 2025-04-06 at 12 36 22 AM(3)](https://github.com/user-attachments/assets/29c8a4dd-c657-469f-a2ad-b160aadca9b5)
-![WhatsApp Image 2025-04-06 at 12 36 21 AM(5)](https://github.com/user-attachments/assets/aea5b658-734b-4c61-a47d-75918d6e9357)
-![WhatsApp Image 2025-04-06 at 12 36 21 AM(4)](https://github.com/user-attachments/assets/0e52c706-c0e4-4c42-84d8-088f4dd57fd8)
-![WhatsApp Image 2025-04-06 at 12 36 21 AM(3)](https://github.com/user-attachments/assets/092b2092-5cfd-4582-88de-d0bed59fd341)
-![WhatsApp Image 2025-04-06 at 12 36 21 AM(2)](https://github.com/user-attachments/assets/57eed7bb-a877-4d8b-bf4d-a4bec5df2db9)
+## 🔐 Login
+
+<img src="https://github.com/user-attachments/assets/ac909718-f8d8-4dd6-aa4f-4cf0ce89871e" width="300" />
+
+---
+
+## ✨ Funcionalidades
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7749da71-7c8d-4590-94e4-a94a68560f12" width="300" />
+  <img src="https://github.com/user-attachments/assets/3fec98df-38a7-43df-bb96-bf4935b52df8" width="300" />
+  <img src="https://github.com/user-attachments/assets/545d7660-a1c4-420f-9cbb-6cedaf9aa532" width="300" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/325194e0-6ee0-4ee8-b4c6-4b29e12e5e9e" width="300" />
+  <img src="https://github.com/user-attachments/assets/373fbd92-6327-4188-9ea2-f6ab66b5b933" width="300" />
+  <img src="https://github.com/user-attachments/assets/fbd8b95a-bbe5-457e-b7dd-2a8d4c9d9b71" width="300" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/29c8a4dd-c657-469f-a2ad-b160aadca9b5" width="300" />
+  <img src="https://github.com/user-attachments/assets/aea5b658-734b-4c61-a47d-75918d6e9357" width="300" />
+  <img src="https://github.com/user-attachments/assets/0e52c706-c0e4-4c42-84d8-088f4dd57fd8" width="300" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/092b2092-5cfd-4582-88de-d0bed59fd341" width="300" />
+  <img src="https://github.com/user-attachments/assets/57eed7bb-a877-4d8b-bf4d-a4bec5df2db9" width="300" />
+</p>
+
 
 
 
